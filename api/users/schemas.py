@@ -17,3 +17,9 @@ class UserCreate(BaseModel):
 
 class UserUpdateBirthday(BaseModel):
     birth_date: date
+
+
+
+class UserLogin(BaseModel):
+    login: str
+    password: str

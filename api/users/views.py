@@ -3,11 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud 
 
-from .schemas import User, UserCreate, UserUpdateBirthday
+
+from .schemas import User, UserCreate, UserUpdateBirthday, UserLogin
 
 from core.models import db_helper
 
-from .dependencies import user_by_id, user_check_by_login
+from .dependencies import user_by_id, user_check_by_login, user_login_check
 
 router = APIRouter(tags=["Users"])
 
@@ -17,11 +18,25 @@ async def get_users(session: AsyncSession = Depends(db_helper.session_getter)):
     return await crud.get_users(session=session)
 
 
+
+
 @router.post("/", status_code=status.HTTP_201_CREATED,)
 async def create_user(
     user_in: UserCreate = Depends(user_check_by_login),
     session: AsyncSession = Depends(db_helper.session_getter),):
+
     return await crud.create_user(session=session, user_in=user_in)
+
+
+
+
+
+@router.post("/login")
+async def user_login(
+    user: UserLogin = Depends(user_login_check),
+    session: AsyncSession = Depends(db_helper.session_getter),):
+
+    return await crud.user_login()
 
 
 

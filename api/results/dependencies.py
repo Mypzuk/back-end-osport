@@ -8,6 +8,7 @@ from . import crud
 from api.competitions.crud import get_competition 
 from api.users.crud import get_user
 
+from .crud import get_user_result_by_competition
 
 from fastapi import Depends, HTTPException, status
 
@@ -29,20 +30,15 @@ async def result_by_id(
 
 
 
-async def check_user_and_competition(
-    result_in: ResultCreate | ResultUpdate,
+async def check_result(
+    result_id: int,
+    result_in: ResultUpdate,
     session: AsyncSession = Depends(db_helper.session_getter)):
     
-    competition = await get_competition(session=session, competition_id=result_in.competition_id) 
+    result = await result_by_id(session=session, result_id=result_id)
 
-    if competition is None: 
-        raise HTTPException(status_code=400, detail="Соревнования не существует")
-    
-    user = await get_user(session=session, id=result_in.user_id) 
-    if user is None: 
-        raise HTTPException(status_code=400, detail="Пользователя не существует")
-    
-    
+    competition = await get_competition(session=session, competition_id=result.competition_id) 
+
     return await calc_points(result_in, competition)
     
 
@@ -55,3 +51,24 @@ async def calc_points(result_in, competition) :
 
 
 
+async def check_user_and_competition_and_result(
+    result_in: ResultCreate,
+    session: AsyncSession = Depends(db_helper.session_getter)):
+    
+    competition = await get_competition(session=session, competition_id=result_in.competition_id) 
+
+    if competition is None: 
+        raise HTTPException(status_code=400, detail="Соревнования не существует")
+    
+    user = await get_user(session=session, id=result_in.user_id) 
+
+    if user is None: 
+        raise HTTPException(status_code=400, detail="Пользователя не существует")
+    
+    result = await get_user_result_by_competition(session=session, user=user, competition=competition)
+    
+    if result: 
+        raise HTTPException(status_code=400, detail="Результат уже существует")
+
+
+    return await calc_points(result_in, competition)

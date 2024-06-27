@@ -16,7 +16,7 @@ from api.competitions.dependencies import competition_by_id
 from api.users.schemas import User
 from api.users.dependencies import user_by_id
 
-from .dependencies import check_user_and_competition, result_by_id
+from .dependencies import check_result, result_by_id, check_user_and_competition_and_result
 
 
 
@@ -31,7 +31,7 @@ async def get_results(session: AsyncSession = Depends(db_helper.session_getter))
 
 @router.post("/")
 async def create_result(
-    result_in: ResultCreate = Depends(check_user_and_competition),
+    result_in: ResultCreate = Depends(check_user_and_competition_and_result),
     session: AsyncSession = Depends(db_helper.session_getter)):
     return await crud.create_result(session=session, result_in=result_in)
     
@@ -39,8 +39,8 @@ async def create_result(
 
 
 @router.put("/{result_id}")
-async def result_update(
-    result_update: ResultUpdate = Depends(check_user_and_competition), 
+async def update_result(
+    result_update: ResultUpdate = Depends(check_result),
     result: Result = Depends(result_by_id), 
     session: AsyncSession = Depends(db_helper.session_getter)):
 
@@ -115,8 +115,6 @@ async def check_user_status_by_competition(
 
 
 
-
-
 @router.get("/commpetition/{competition_id}/rating")
 async def get_competition_rating(
     competition: Competition = Depends(competition_by_id),
@@ -133,3 +131,11 @@ async def get_total_rating(session: AsyncSession = Depends(db_helper.session_get
     return await crud.get_total_rating(session=session)
 
 
+
+
+@router.get("/user/{user_id}/competitions")
+async def competition_info(
+    user: User = Depends (user_by_id),
+    session: AsyncSession = Depends(db_helper.session_getter)):
+
+    return await crud.competition_info(session=session, user=user)

@@ -14,6 +14,8 @@ async def get_competitions(session: AsyncSession):
     return list(competitions)
 
 
+
+
 async def get_competition(session: AsyncSession, **kwargs):
     query = select(Competitions)
     for key, value in kwargs.items():
