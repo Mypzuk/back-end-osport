@@ -22,6 +22,7 @@ class Competitions(Base):
     competition_id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
+    type: Mapped[str] = mapped_column(String, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=True)
     coefficient: Mapped[float] = mapped_column(Float, nullable=True)
     video_instruction: Mapped[str] = mapped_column(String, nullable=False)
@@ -45,7 +46,7 @@ class Results(Base):
     )
 
     video: Mapped[str] = mapped_column(String, nullable=False)
-    count: Mapped[int] = mapped_column(Integer, nullable=True)
+    count: Mapped[int] = mapped_column(Integer, nullable=False)
     points: Mapped[float] = mapped_column(Float, nullable=True)
     status: Mapped[str] = mapped_column(String(1), nullable=False)
 

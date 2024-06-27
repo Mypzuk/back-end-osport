@@ -3,7 +3,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Users
 
-from .schemas import User, UserCreate
+from .schemas import User, UserCreate, UserUpdateBirthday
 
 async def get_users(session: AsyncSession):
     stmt = select(Users).order_by(Users.id)
@@ -20,8 +20,28 @@ async def create_user(session: AsyncSession, user_in: UserCreate):
     return user
 
 
-async def get_user(session: AsyncSession, user_id: int):
-    return await session.get(Users, user_id)
+
+async def get_user(session: AsyncSession, **kwargs):
+    query = select(Users)
+    for key, value in kwargs.items():
+        query = query.where(getattr(Users, key) == value)
+    result = await session.execute(query)
+    return result.scalars().first()
+
+# 
+# async def get_user(session: AsyncSession, user_id: int | str):
+#     return await session.get(Users, user_id)
 
 
-# async def user_update_partial(session: AsyncSession,)
+
+async def delete_user(session: AsyncSession, user: User):
+    await session.delete(user)
+    await session.commit()
+    return {"status": "success", "message": "User deleted successfully"}    
+
+
+
+async def update_user_birthdate(session: AsyncSession, user: User,  user_update: UserUpdateBirthday ):
+    user.birth_date = user_update.birth_date
+    await session.commit()
+    return {"status": "success", "message": "User updated successfully"} 

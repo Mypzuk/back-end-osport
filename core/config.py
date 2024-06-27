@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from pydantic import BaseModel
 
+
 BASE_DIR = Path(__file__).parent.parent
 
 
@@ -20,4 +21,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
 

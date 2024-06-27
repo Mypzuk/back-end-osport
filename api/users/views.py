@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud 
 
-from .schemas import User, UserCreate
+from .schemas import User, UserCreate, UserUpdateBirthday
 
 from core.models import db_helper
 
-from .dependencies import user_by_id
+from .dependencies import user_by_id, user_check_by_login
 
 router = APIRouter(tags=["Users"])
 
@@ -18,7 +18,9 @@ async def get_users(session: AsyncSession = Depends(db_helper.session_getter)):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED,)
-async def create_user(user_in: UserCreate, session: AsyncSession = Depends(db_helper.session_getter),):
+async def create_user(
+    user_in: UserCreate = Depends(user_check_by_login),
+    session: AsyncSession = Depends(db_helper.session_getter),):
     return await crud.create_user(session=session, user_in=user_in)
 
 
@@ -29,5 +31,21 @@ async def get_user(user: User = Depends(user_by_id),):
 
 
 
-# @router.patch("/{user_id}/birthdate")
-# async def update_bithdate(user_in: ):
+@router.delete("/{user_id}", response_model=dict)
+async def delete_user(
+    user: User = Depends(user_by_id), 
+    session: AsyncSession = Depends(db_helper.session_getter)
+):
+    return await crud.delete_user(session=session, user=user)
+    
+
+
+@router.patch("/{user_id}/birthdate", response_model=dict)
+async def update_user_birthdate(
+    user_update: UserUpdateBirthday,
+    user: User = Depends(user_by_id), 
+    session: AsyncSession = Depends(db_helper.session_getter)
+):
+    return await crud.update_user_birthdate(session=session, user=user, user_update=user_update)
+    
+
