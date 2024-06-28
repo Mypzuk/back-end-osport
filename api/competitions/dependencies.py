@@ -21,7 +21,7 @@ async def competition_by_id(
     
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Competition {competition_id} not found!",
+        detail=f"Соревнование {competition_id} не найдено!",
     )
 
 

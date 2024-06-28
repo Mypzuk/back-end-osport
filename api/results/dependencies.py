@@ -19,13 +19,14 @@ async def result_by_id(
     session: AsyncSession = Depends(db_helper.session_getter)):
 
     result = await crud.get_result(session=session, result_id=result_id)
+
     if result is not None:
         return result 
     
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Result {result_id} not found!",
+        detail=f"Результат {result_id} не найден!",
     )
 
 

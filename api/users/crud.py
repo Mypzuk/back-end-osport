@@ -24,7 +24,7 @@ async def create_user(session: AsyncSession, user_in: UserCreate):
 
 
 async def user_login():
-    return 'da'
+    return 'Пользователь вошел'
 
 
 
@@ -33,6 +33,7 @@ async def get_user(session: AsyncSession, **kwargs):
     for key, value in kwargs.items():
         query = query.where(getattr(Users, key) == value)
     result = await session.execute(query)
+
     return result.scalars().first()
 
 # 
@@ -44,11 +45,10 @@ async def get_user(session: AsyncSession, **kwargs):
 async def delete_user(session: AsyncSession, user: User):
     await session.delete(user)
     await session.commit()
-    return {"status": "success", "message": "User deleted successfully"}    
-
+    return {"status": "Удачно", "message": "Пользователь успешно удален"}    
 
 
 async def update_user_birthdate(session: AsyncSession, user: User,  user_update: UserUpdateBirthday ):
     user.birth_date = user_update.birth_date
     await session.commit()
-    return {"status": "success", "message": "User updated successfully"} 
+    return {"status": "success", "message": "Пользователь успешно обновлен"} 

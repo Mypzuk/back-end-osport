@@ -17,7 +17,7 @@ async def user_by_id(user_id: Annotated[int, Path],session: AsyncSession = Depen
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"User {user_id} not found!",
+        detail=f"Пользователь {user_id} не найден!",
     )
 
 
@@ -28,7 +28,7 @@ async def user_check_by_login(user_create: UserCreate, session: AsyncSession = D
     if user is not None:
         raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"User login already exsist",
+        detail=f"Такой логин уже существует",
     )
     return user_create
 
@@ -39,6 +39,6 @@ async def user_login_check(user_login: UserLogin, session: AsyncSession = Depend
     if user is None:
         raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"User login not found",
+        detail=f"Логин не найден",
     )
     return user_login

@@ -15,6 +15,9 @@ class Users(Base):
     birth_date: Mapped[Date] = mapped_column(Date, nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
 
+    results: Mapped["Results"] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
 class Competitions(Base):
     __tablename__ = "competitions"
@@ -28,6 +31,9 @@ class Competitions(Base):
     video_instruction: Mapped[str] = mapped_column(String, nullable=False)
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
 
+    results: Mapped["Results"] = relationship(
+        back_populates="competition", cascade="all, delete-orphan"
+    )
 
 class Results(Base):
     __tablename__ = "results"
@@ -51,9 +57,9 @@ class Results(Base):
     status: Mapped[str] = mapped_column(String(1), nullable=False)
 
     competition: Mapped["Competitions"] = relationship(
-        backref="results", foreign_keys=[competition_id], cascade="all, delete"
+        back_populates="results"
     )
 
     user: Mapped["Users"] = relationship(
-        backref="results", foreign_keys=[user_id], cascade="all, delete"
+        back_populates="results"
     )

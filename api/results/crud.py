@@ -44,10 +44,10 @@ async def update_reslut(
 
 
 
-async def delete_result(session: AsyncSession, result: Result):
+async def delete_result(session: AsyncSession, result):
     await session.delete(result)
     await session.commit()
-    return {"status": "success", "message": "Result deleted successfully"}    
+    return {"status": "Удачно", "message": "Результат успешно удален"}    
 
 
 

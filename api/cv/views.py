@@ -13,7 +13,7 @@ from .schemas import ItemType
 
 router = APIRouter(tags=["Video"])
 
-@router.post("/video")
+@router.post("/")
 async def video(id: str, type: ItemType = Query(..., description="Choose an video type"), video: UploadFile = File(...)):
     try:
         with open(f"cv/cvmedia/{video.filename}", "wb") as buffer:

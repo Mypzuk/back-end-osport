@@ -38,7 +38,7 @@ async def create_competition(session: AsyncSession, competition_in: CompetitionC
 async def delete_competition(session: AsyncSession, competition: Competition):
     await session.delete(competition)
     await session.commit()
-    return {"status": "success", "message": "Competition deleted successfully"}    
+    return {"status": "Удачно", "message": "Соревнование успешно удалено"}    
 
 
 
