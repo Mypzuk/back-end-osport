@@ -113,9 +113,8 @@ async def get_competition_rating(session: AsyncSession, competition):
 async def get_total_rating(session: AsyncSession):
     stmt = select(Results.user_id, func.sum(Results.points)).filter(Results.status.isnot(None), Results.count > 0).group_by(Results.user_id).order_by(desc(func.sum(Results.count)))
     result: Result = await session.execute(stmt)
-    print(result)
     data = result.scalars().all()
-    print(data)
+    return data
 
 
 

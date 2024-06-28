@@ -35,7 +35,7 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
         if type == "pullUps":
             count = await check_pull(video.filename)
 
-        os.remove(f"cv/cvmedia/{video.filename}")
+        os.remove(f"api/cv/cvmedia/{video.filename}")
         return count
     except Exception as e:
         return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}

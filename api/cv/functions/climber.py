@@ -12,7 +12,7 @@ async def check_climber(name:str):
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
     pose = mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.7)
-    video = cv2.VideoCapture(f"/api/cv/cvmedia/{name}")
+    video = cv2.VideoCapture(f"api/cv/cvmedia/{name}")
 
     count = 0
     left_leg_open = True

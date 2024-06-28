@@ -37,7 +37,6 @@ async def create_result(
     
 
 
-
 @router.put("/{result_id}")
 async def update_result(
     result_update: ResultUpdate = Depends(check_result),

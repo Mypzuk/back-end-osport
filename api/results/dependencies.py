@@ -71,5 +71,4 @@ async def check_user_and_competition_and_result(
     if result: 
         raise HTTPException(status_code=400, detail="Результат уже существует")
 
-
     return await calc_points(result_in, competition)
