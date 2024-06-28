@@ -8,6 +8,7 @@ from .functions.climber import check_climber
 from .functions.bicycle  import check_bicycle
 from .functions.pull_ups import check_pull
 
+from core import BASE_DIR
 
 from .schemas import ItemType
 
@@ -16,7 +17,7 @@ router = APIRouter(tags=["Video"])
 @router.post("/")
 async def video(id: str, type: ItemType = Query(..., description="Choose an video type"), video: UploadFile = File(...)):
     try:
-        with open(f"cv/cvmedia/{video.filename}", "wb") as buffer:
+        with open(f"api/cv/cvmedia/{video.filename}", "wb") as buffer:
             shutil.copyfileobj(video.file, buffer)
 
         if type == "pushUps":

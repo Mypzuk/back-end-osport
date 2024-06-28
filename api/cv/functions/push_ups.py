@@ -11,7 +11,7 @@ async def check_pushUps(name:str):
     mp_pose = mp.solutions.pose 
 
 
-    cap = cv2.VideoCapture(f"{BASE_DIR}/api/cv/cvmedia/{name}") 
+    cap = cv2.VideoCapture(f"api/cv/cvmedia/{name}") 
     
     count = 0 
     position = "up" 
