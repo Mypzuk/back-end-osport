@@ -4,6 +4,8 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Users
 
+from .dependencies import user_password_check
+
 from .schemas import User, UserCreate, UserUpdateBirthday
 
 async def get_users(session: AsyncSession):
@@ -52,3 +54,24 @@ async def update_user_birthdate(session: AsyncSession, user: User,  user_update:
     user.birth_date = user_update.birth_date
     await session.commit()
     return {"status": "success", "message": "Пользователь успешно обновлен"} 
+
+
+async def update_user_data(session: AsyncSession, user, user_update):
+
+    for name, value in user_update:
+        setattr(user, name, value)
+    await session.commit()
+    return {"status": "success", "message": "Пользователь успешно обновлен"} 
+
+
+async def check_user_password(session: AsyncSession, user, user_password):
+    await user_password_check(user, user_password)
+    return True
+
+
+
+
+async def change_user_password(session: AsyncSession, user, user_password):
+    user.password = user_password.password
+    await session.commit()
+    return {"status": "success", "message": "Пароль успешно обновлен"} 

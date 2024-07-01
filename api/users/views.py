@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
 
 
-from .schemas import User, UserCreate, UserUpdateBirthday, UserLogin
+from .schemas import User, UserCreate, UserUpdateBirthday, UserLogin, UserUpdate, UserPassword, NewUserPass
 
 from core.models import db_helper
 
@@ -64,3 +64,33 @@ async def update_user_birthdate(
     return await crud.update_user_birthdate(session=session, user=user, user_update=user_update)
     
 
+
+@router.patch("/{user_id}/height-weight")
+async def update_user_data(
+    user_update: UserUpdate,
+    user: User = Depends(user_by_id), 
+    session: AsyncSession = Depends(db_helper.session_getter)
+):
+    return await crud.update_user_data(session=session, user=user, user_update=user_update)
+
+
+
+
+@router.patch("/{user_id}/check-password")
+async def check_user_password( 
+    user_password: UserPassword,
+    user: User = Depends(user_by_id), 
+    session: AsyncSession = Depends(db_helper.session_getter)
+):
+    return await crud.check_user_password(session=session, user=user, user_password=user_password)
+
+
+
+
+@router.patch("/{user_id}/change-password")
+async def change_user_password( 
+    user_password: NewUserPass,
+    user: User = Depends(user_by_id), 
+    session: AsyncSession = Depends(db_helper.session_getter)
+):
+    return await crud.change_user_password(session=session, user=user, user_password=user_password)

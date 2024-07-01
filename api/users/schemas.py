@@ -23,3 +23,17 @@ class UserUpdateBirthday(BaseModel):
 class UserLogin(BaseModel):
     login: str
     password: str
+
+
+class UserUpdate(BaseModel):
+    first_name: str
+    last_name: str
+    height: str 
+    weight: str
+
+
+class UserPassword(BaseModel):
+    password: str
+
+class NewUserPass(UserPassword):
+    pass

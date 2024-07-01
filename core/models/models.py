@@ -14,6 +14,9 @@ class Users(Base):
     last_name: Mapped[str] = mapped_column(String(100), nullable=True)
     birth_date: Mapped[Date] = mapped_column(Date, nullable=False)
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    weight: Mapped[str] = mapped_column(String,nullable=True )
+    height: Mapped[str] = mapped_column(String,nullable=True )
+
 
     results: Mapped["Results"] = relationship(
         back_populates="user", cascade="all, delete-orphan"
