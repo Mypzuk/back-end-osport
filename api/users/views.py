@@ -8,7 +8,7 @@ from .schemas import User, UserCreate, UserUpdateBirthday, UserLogin, UserUpdate
 
 from core.models import db_helper
 
-from .dependencies import user_by_id, user_check_by_login, user_login_check
+from .dependencies import user_by_id, user_check_by_email_and_login, user_login_check
 
 router = APIRouter(tags=["Users"])
 
@@ -22,12 +22,10 @@ async def get_users(session: AsyncSession = Depends(db_helper.session_getter)):
 
 @router.post("/", status_code=status.HTTP_201_CREATED,)
 async def create_user(
-    user_in: UserCreate = Depends(user_check_by_login),
+    user_in: UserCreate = Depends(user_check_by_email_and_login),
     session: AsyncSession = Depends(db_helper.session_getter),):
 
     return await crud.create_user(session=session, user_in=user_in)
-
-
 
 
 

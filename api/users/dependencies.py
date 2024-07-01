@@ -22,8 +22,7 @@ async def user_by_id(user_id: Annotated[int, Path],session: AsyncSession = Depen
 
 
 
-
-async def user_check_by_login(user_create: UserCreate, session: AsyncSession = Depends(db_helper.session_getter), ):
+async def user_check_by_email_and_login(user_create: UserCreate, session: AsyncSession = Depends(db_helper.session_getter), ):
     user = await crud.get_user(session=session, login=user_create.login)
 
     if user is not None:
@@ -31,8 +30,14 @@ async def user_check_by_login(user_create: UserCreate, session: AsyncSession = D
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Такой логин уже существует",
     )
-    
 
+    user = await crud.get_user(session=session, email=user_create.email)
+    if user is not None:
+        raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Такой email уже существует",
+    )
+    
     return user_create
 
 
