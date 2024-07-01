@@ -74,7 +74,7 @@ async def update_user_data(
 
 
 
-@router.patch("/{user_id}/check-password")
+@router.post("/{user_id}/check-password")
 async def check_user_password( 
     user_password: UserPassword,
     user: User = Depends(user_by_id), 
