@@ -38,16 +38,19 @@ async def check_result(
     
     result = await result_by_id(session=session, result_id=result_id)
 
-    competition = await get_competition(session=session, competition_id=result.competition_id) 
+    if result.count > result_in.count:
+        raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Результат меньше предыдущего!",
+    )
 
-    return await calc_points(result_in, competition)
+    return result_in
     
 
 
 async def calc_points(result_in, competition) :
 
     result_in.points = result_in.count * competition.coefficient
-
     return result_in
 
 

@@ -8,6 +8,9 @@ from api.users.schemas import User
 
 from api.competitions.schemas import Competition
 
+from api.competitions.crud import get_competition
+
+
 async def get_results(session: AsyncSession):
     stmt = select(Results).order_by(Results.competition_id)
     result: Result = await session.execute(stmt)
@@ -32,13 +35,19 @@ async def create_result(session: AsyncSession, result_in ):
 
 
 
-async def update_reslut(
+async def update_result(
         session: AsyncSession, 
         result: Result, 
         result_update: ResultUpdate):
-    
+
+    competition = await get_competition(session=session, competition_id = result.competition_id)
+
+    setattr(result, "points", result_update.count * competition.coefficient )
+
     for name, value in result_update.model_dump().items():
         setattr(result, name, value)
+
+
     await session.commit()
     return result
 

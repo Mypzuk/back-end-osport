@@ -43,8 +43,10 @@ async def update_result(
     result: Result = Depends(result_by_id), 
     session: AsyncSession = Depends(db_helper.session_getter)):
 
-    return await crud.update_reslut(session=session, result=result, result_update=result_update)
+    return await crud.update_result(session=session, result=result, result_update=result_update)
  
+
+
 
 @router.delete("/{result_id}")
 async def delete_result(
