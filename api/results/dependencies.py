@@ -51,6 +51,8 @@ async def check_result(
 async def calc_points(result_in, competition) :
 
     result_in.points = result_in.count * competition.coefficient
+    
+
     return result_in
 
 

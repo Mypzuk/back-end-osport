@@ -16,6 +16,9 @@ class Users(Base):
     sex: Mapped[str] = mapped_column(String(1), nullable=False)
     weight: Mapped[str] = mapped_column(String,nullable=True )
     height: Mapped[str] = mapped_column(String,nullable=True )
+    total_experience: Mapped[float] = mapped_column(Float, default=0, nullable=True)
+    current_experience: Mapped[float] = mapped_column(Float, default=0, nullable=True)
+
 
 
 

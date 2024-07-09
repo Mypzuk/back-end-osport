@@ -10,6 +10,7 @@ from api.competitions.schemas import Competition
 
 from api.competitions.crud import get_competition
 
+from api.users.crud import get_user
 
 async def get_results(session: AsyncSession):
     stmt = select(Results).order_by(Results.competition_id)
@@ -26,7 +27,17 @@ async def get_result(session: AsyncSession, **kwargs):
     return result.scalars().first()
 
 
+
+
+# -----
 async def create_result(session: AsyncSession, result_in ):
+
+    user = await get_user(session=session, id = result_in.user_id)
+
+
+    user.total_experience = user.total_experience + result_in.points
+    user.current_experience = user.current_experience + result_in.points
+
     result = Results(**result_in.model_dump())
     session.add(result)
     await session.commit()
@@ -41,11 +52,18 @@ async def update_result(
         result_update: ResultUpdate):
 
     competition = await get_competition(session=session, competition_id = result.competition_id)
+    user = await get_user(session=session, id = result.user_id)
 
+    setattr(user, "current_experience", user.current_experience + (result_update.count - result.count) * competition.coefficient )
+    setattr(user, "total_experience", user.total_experience + (result_update.count - result.count) * competition.coefficient )
+
+    
     setattr(result, "points", result_update.count * competition.coefficient )
 
     for name, value in result_update.model_dump().items():
         setattr(result, name, value)
+
+
 
 
     await session.commit()

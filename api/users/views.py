@@ -92,3 +92,12 @@ async def change_user_password(
     session: AsyncSession = Depends(db_helper.session_getter)
 ):
     return await crud.change_user_password(session=session, user=user, user_password=user_password)
+
+
+@router.get("/profile")
+async def user_profile(
+    user: User = Depends(user_by_id), 
+    session: AsyncSession = Depends(db_helper.session_getter)
+
+):
+    return await crud.user_profile(session=session, user=user)
