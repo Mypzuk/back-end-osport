@@ -3,9 +3,10 @@ __all__ = (
     "Base",
     "Users", 
     "Results", 
-    "Competitions"
+    "Competitions", 
+    "Whitelist"
 )
 
 from .db_helper import db_helper
 from .base import Base
-from .models import Users, Results, Competitions
+from .models import Users, Results, Competitions, Whitelist

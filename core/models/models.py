@@ -38,6 +38,7 @@ class Competitions(Base):
     coefficient: Mapped[float] = mapped_column(Float, nullable=True)
     video_instruction: Mapped[str] = mapped_column(String, nullable=False)
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    status: Mapped[Date] = mapped_column(String, default="free")
 
     results: Mapped["Results"] = relationship(
         back_populates="competition", cascade="all, delete-orphan"
@@ -71,3 +72,17 @@ class Results(Base):
     user: Mapped["Users"] = relationship(
         back_populates="results"
     )
+    
+
+
+class Whitelist(Base):
+    __tablename__ = "whitelist"
+
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    competition_id: Mapped[int] = mapped_column(
+        ForeignKey(Competitions.competition_id, ondelete="CASCADE"),
+        nullable=False
+    )
+    email: Mapped[str] = mapped_column(String(100), nullable=False)
