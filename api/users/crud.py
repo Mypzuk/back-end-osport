@@ -27,9 +27,16 @@ async def create_user(session: AsyncSession, user_in: UserCreate):
 
 
 
-async def user_login():
-    return 'Пользователь вошел'
+async def patch_user_after_registration(session: AsyncSession, user, user_in):
+    for name, value in user_in:
+        setattr(user, name, value)
+    await session.commit()
+    return {"status": "Удачно", "message": "Пользователь успешно обновлен"} 
 
+
+
+async def user_login(session: AsyncSession, user):
+    return {"user_id":user.id}
 
                                          
 async def get_user(session: AsyncSession, **kwargs):
@@ -81,18 +88,23 @@ async def change_user_password(session: AsyncSession, user, user_password):
 
 
 
+async def poschitat_lvl(total_points: int):
+    lvl = 1
+    lvl_up_points = 250
+    k = 1.25
+    while True:
+        if(total_points >= lvl_up_points):
+            lvl=lvl+1
+            total_points= total_points-lvl_up_points
+            lvl_up_points=lvl_up_points*k
+        else:
+            return lvl
+
+
+
 
 async def user_profile(session: AsyncSession, user):
-    
-    #     # Ваш исходный запрос
-    # stmt = select(Results).where(Results.user_id == user.id)
-
-    # # Измените запрос, чтобы он считал количество записей
-    # count_stmt = select(func.count()).select_from(stmt.subquery())
-
-    # # Выполнение запроса и получение результата
-    # result = session.execute(count_stmt).scalar()
-    
+        
     result = await session.scalar(
             select(func.count(Results.competition_id)).where(Results.user_id == user.id)
         )
@@ -103,8 +115,9 @@ async def user_profile(session: AsyncSession, user):
         "last_name": user.last_name,
         "competitions":result,
         "current_experience": user.current_experience,
-        "level": int(user.total_experience / 100 )
+        "level": await poschitat_lvl(user.total_experience)
 
     }
 
     return user_data
+

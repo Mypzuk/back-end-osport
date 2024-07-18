@@ -35,8 +35,8 @@ async def create_result(session: AsyncSession, result_in ):
     user = await get_user(session=session, id = result_in.user_id)
 
 
-    user.total_experience = user.total_experience + result_in.points
-    user.current_experience = user.current_experience + result_in.points
+    user.total_experience = (user.total_experience + result_in.points) + 20
+    user.current_experience = (user.current_experience + result_in.points) + 20 
 
     result = Results(**result_in.model_dump())
     session.add(result)

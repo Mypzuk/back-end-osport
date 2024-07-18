@@ -12,7 +12,7 @@ async def check_pull(name:str):
     
     cap = cv2.VideoCapture(f"api/cv/cvmedia/{name}")
      
-    count = -1
+    count = 0
     position = None
      
     with mp_pose.Pose(

@@ -1,4 +1,4 @@
-from typing import Annotated
+
 
 from fastapi import Path, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,7 @@ from . import crud
 from .schemas import UserCreate, UserLogin, UserPassword
 
 
-async def user_by_id(user_id: Annotated[int, Path],session: AsyncSession = Depends(db_helper.session_getter),):
+async def user_by_id(user_id: int, session: AsyncSession = Depends(db_helper.session_getter),):
     user = await crud.get_user(session=session, id=user_id)
     if user is not None:
         return user
@@ -60,7 +60,7 @@ async def user_login_check(user_login: UserLogin, session: AsyncSession = Depend
 async def user_password_check(user, user_password):
     
     if user.password == user_password.password: 
-        return user_password
+        return user
     
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

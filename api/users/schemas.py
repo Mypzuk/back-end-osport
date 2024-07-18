@@ -9,6 +9,10 @@ class UserCreate(BaseModel):
     login: str
     email: str 
     password: str
+    
+
+
+class UserUpdateAfterCreate(BaseModel):
     first_name: str
     last_name: str
     birth_date: date

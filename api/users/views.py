@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from . import crud 
 
 
-from .schemas import User, UserCreate, UserUpdateBirthday, UserLogin, UserUpdate, UserPassword, NewUserPass
+from .schemas import User, UserCreate, UserUpdateBirthday, UserLogin, UserUpdate, UserPassword, NewUserPass, UserUpdateAfterCreate
 
 from core.models import db_helper
 
@@ -28,13 +28,23 @@ async def create_user(
     return await crud.create_user(session=session, user_in=user_in)
 
 
+@router.patch("/{user_id}")
+async def patch_user_after_registration(
+    user_in: UserUpdateAfterCreate,
+    user: User = Depends(user_by_id),
+    session: AsyncSession = Depends(db_helper.session_getter)):
+
+    return await crud.patch_user_after_registration(session=session, user=user, user_in=user_in)
+
+
+
 
 @router.post("/login")
 async def user_login(
     user: UserLogin = Depends(user_login_check),
     session: AsyncSession = Depends(db_helper.session_getter),):
 
-    return await crud.user_login()
+    return await crud.user_login(session=session, user=user)
 
 
 

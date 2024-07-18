@@ -10,10 +10,10 @@ class Users(Base):
     login: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(100), nullable=False)  # Новое поле
-    first_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    first_name: Mapped[str] = mapped_column(String(100), nullable=True)
     last_name: Mapped[str] = mapped_column(String(100), nullable=True)
-    birth_date: Mapped[Date] = mapped_column(Date, nullable=False)
-    sex: Mapped[str] = mapped_column(String(1), nullable=False)
+    birth_date: Mapped[Date] = mapped_column(Date, nullable=True)
+    sex: Mapped[str] = mapped_column(String(1), nullable=True)
     weight: Mapped[str] = mapped_column(String,nullable=True )
     height: Mapped[str] = mapped_column(String,nullable=True )
     total_experience: Mapped[float] = mapped_column(Float, default=0, nullable=True)
