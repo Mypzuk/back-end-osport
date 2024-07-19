@@ -8,7 +8,7 @@ from core.models import db_helper
 
 from . import crud
 
-from .schemas import Result, ResultCreate, ResultUpdate
+from .schemas import Result, ResultCreate, ResultUpdate, ResultDenied
 
 from api.competitions.schemas import Competition
 from api.competitions.dependencies import competition_by_id
@@ -16,7 +16,7 @@ from api.competitions.dependencies import competition_by_id
 from api.users.schemas import User
 from api.users.dependencies import user_by_id
 
-from .dependencies import check_result, result_by_id, check_user_and_competition_and_result
+from .dependencies import check_result, result_by_id, check_user_and_competition_and_result, check_user_and_competition_and_result1
 
 
 
@@ -32,6 +32,14 @@ async def get_results(session: AsyncSession = Depends(db_helper.session_getter))
 @router.post("/")
 async def create_result(
     result_in: ResultCreate = Depends(check_user_and_competition_and_result),
+    session: AsyncSession = Depends(db_helper.session_getter)):
+    return await crud.create_result(session=session, result_in=result_in)
+    
+
+@router.post("/denied-result")
+async def denied_result(
+    new_count: int,
+    result_in: ResultDenied = Depends(check_user_and_competition_and_result1),
     session: AsyncSession = Depends(db_helper.session_getter)):
     return await crud.create_result(session=session, result_in=result_in)
     

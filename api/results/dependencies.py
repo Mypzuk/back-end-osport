@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from typing import Union
 from core.models import db_helper
 
-from .schemas import ResultCreate, ResultUpdate
+from .schemas import ResultCreate, ResultUpdate, ResultDenied
 from . import crud
 
 from api.competitions.crud import get_competition 
@@ -59,6 +60,31 @@ async def calc_points(result_in, competition) :
 
 async def check_user_and_competition_and_result(
     result_in: ResultCreate,
+    session: AsyncSession = Depends(db_helper.session_getter)):
+    
+    competition = await get_competition(session=session, competition_id=result_in.competition_id) 
+
+    if competition is None: 
+        raise HTTPException(status_code=400, detail="Соревнования не существует")
+    
+    user = await get_user(session=session, id=result_in.user_id) 
+
+    if user is None: 
+        raise HTTPException(status_code=400, detail="Пользователя не существует")
+    
+    result = await get_user_result_by_competition(session=session, user=user, competition=competition)
+    
+    if result: 
+        raise HTTPException(status_code=400, detail="Результат уже существует")
+
+    return await calc_points(result_in, competition)
+
+
+
+
+
+async def check_user_and_competition_and_result1(
+    result_in: ResultDenied,
     session: AsyncSession = Depends(db_helper.session_getter)):
     
     competition = await get_competition(session=session, competition_id=result_in.competition_id) 

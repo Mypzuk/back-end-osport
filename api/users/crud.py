@@ -101,6 +101,19 @@ async def poschitat_lvl(total_points: int):
             return lvl
 
 
+async def calc_rank_user(level: int):
+    if(level < 5):
+        return "Юниор"
+    elif(level < 11):
+        return "Энтузиаст"
+    elif(level < 15):
+        return "Знаток"
+    elif(level < 20 ):
+        return "Мастер"
+    elif(level < 26):
+        return "Чемпион"
+    elif(level > 25 ):
+        return "Легенда"
 
 
 async def user_profile(session: AsyncSession, user):
@@ -108,6 +121,9 @@ async def user_profile(session: AsyncSession, user):
     result = await session.scalar(
             select(func.count(Results.competition_id)).where(Results.user_id == user.id)
         )
+     
+    level = await poschitat_lvl(user.total_experience)
+    rank = await calc_rank_user(level)
 
 
     user_data = {
@@ -115,7 +131,8 @@ async def user_profile(session: AsyncSession, user):
         "last_name": user.last_name,
         "competitions":result,
         "current_experience": user.current_experience,
-        "level": await poschitat_lvl(user.total_experience)
+        "level": level,
+        "rank": rank
 
     }
 
