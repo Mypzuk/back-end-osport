@@ -45,13 +45,14 @@ async def denied_result(
     
 
 
-@router.put("/{result_id}")
-async def update_result(
-    result_update: ResultUpdate = Depends(check_result),
-    result: Result = Depends(result_by_id), 
-    session: AsyncSession = Depends(db_helper.session_getter)):
 
-    return await crud.update_result(session=session, result=result, result_update=result_update)
+# @router.put("/{result_id}")
+# async def update_result(
+#     result_update: ResultUpdate = Depends(check_result),
+#     result: Result = Depends(result_by_id), 
+#     session: AsyncSession = Depends(db_helper.session_getter)):
+
+#     return await crud.update_result(session=session, result=result, result_update=result_update)
  
 
 

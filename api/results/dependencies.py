@@ -67,20 +67,18 @@ async def check_user_and_competition_and_result(
     if competition is None: 
         raise HTTPException(status_code=400, detail="Соревнования не существует")
     
-    user = await get_user(session=session, id=result_in.user_id) 
+    user = await get_user(session=session, id=result_in.user_id)
 
     if user is None: 
         raise HTTPException(status_code=400, detail="Пользователя не существует")
     
     result = await get_user_result_by_competition(session=session, user=user, competition=competition)
-    
+
     if result: 
-        raise HTTPException(status_code=400, detail="Результат уже существует")
+        if result.count >= result_in.count:
+            raise HTTPException(status_code=418, detail="Результат не больше предыдущего")
 
     return await calc_points(result_in, competition)
-
-
-
 
 
 async def check_user_and_competition_and_result1(
@@ -96,10 +94,5 @@ async def check_user_and_competition_and_result1(
 
     if user is None: 
         raise HTTPException(status_code=400, detail="Пользователя не существует")
-    
-    result = await get_user_result_by_competition(session=session, user=user, competition=competition)
-    
-    if result: 
-        raise HTTPException(status_code=400, detail="Результат уже существует")
 
     return await calc_points(result_in, competition)
