@@ -29,19 +29,36 @@ async def get_result(session: AsyncSession, **kwargs):
 
 # ----- придумать как передавать необязательный параметр
 async def create_result(session: AsyncSession, result_in):
-    if result_in.status == 'checked_cv':
-        user = await get_user(session=session, id=result_in.user_id)
+    competition = await get_competition(session=session, competition_id=result_in.competition_id) 
+    user = await get_user(session=session, id=result_in.user_id)
+    
+    result = await get_user_result_by_competition(session=session, user=user, competition=competition)
 
-        try:
-            os.remove(f"api/cv/cvmedia/{result_in.video}")
-        except FileNotFoundError:
-            return {"message": "Такого видео нет на сервере :c"}
+    if result:
+        user.total_experience = (user.total_experience - result.points) - 20
+        user.current_experience = (user.current_experience - result.points) - 20
+        
+        for name, value in result_in.model_dump().items():
+            setattr(result, name, value)
+        
+        if result_in.status == 'checked_cv':
+            user.total_experience = (user.total_experience + result_in.points) + 20
+            user.current_experience = (user.current_experience + result_in.points) + 20
+    else:
+        if result_in.status == 'checked_cv':
+            user = await get_user(session=session, id=result_in.user_id)
 
-        user.total_experience = (user.total_experience + result_in.points) + 20
-        user.current_experience = (user.current_experience + result_in.points) + 20 
+            try:
+                os.remove(f"api/cv/cvmedia/{result_in.video}")
+            except FileNotFoundError:
+                return {"message": "Такого видео нет на сервере :c"}
 
-    result = Results(**result_in.model_dump())
-    session.add(result)
+            user.total_experience = (user.total_experience + result_in.points) + 20
+            user.current_experience = (user.current_experience + result_in.points) + 20 
+
+        result = Results(**result_in.model_dump())
+        session.add(result)
+        
     await session.commit()
     await session.refresh(result)
     return result
@@ -85,9 +102,9 @@ async def get_user_results(session: AsyncSession, user: User):
 
 async def get_user_result_by_competition(session: AsyncSession, user, competition):
     stmt = select(Results).where(and_(Results.user_id == user.id, Results.competition_id == competition.competition_id, Results.status != status_wait_adm))
-    result: Result = await session.execute(stmt)
-    data = result.scalars().all()
-    return list(data)
+    result = await session.execute(stmt)
+    data = result.scalars().first()
+    return data
 
 async def get_competition_result(session: AsyncSession, competition):
     stmt = select(Results).where(and_(Results.competition_id == competition.competition_id, Results.status != status_wait_adm))
