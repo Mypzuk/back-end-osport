@@ -21,47 +21,41 @@ async def user_by_id(user_id: int, session: AsyncSession = Depends(db_helper.ses
     )
 
 
-
 async def user_check_by_email_and_login(user_create: UserCreate, session: AsyncSession = Depends(db_helper.session_getter), ):
     user = await crud.get_user(session=session, login=user_create.login)
 
     if user is not None:
         raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Такой логин уже существует",
-    )
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Такой логин уже существует",
+        )
 
     user = await crud.get_user(session=session, email=user_create.email)
     if user is not None:
         raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Такой email уже существует",
-    )
-    
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Такой email уже существует",
+        )
+
     return user_create
 
 
-
 async def user_login_check(user_login: UserLogin, session: AsyncSession = Depends(db_helper.session_getter), ):
-    user = await crud.get_user(session=session, login=user_login.login)
+    user = await crud.get_user(session=session, login=user_login.username)
     if user is None:
         raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Логин не найден",
-    )
-    
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Логин не найден",
+        )
+
     return await user_password_check(user=user, user_password=user_login)
 
 
-
-
-
-
 async def user_password_check(user, user_password):
-    
-    if user.password == user_password.password: 
+
+    if user.password == user_password.password:
         return user
-    
+
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail=f"Неправильный пароль",

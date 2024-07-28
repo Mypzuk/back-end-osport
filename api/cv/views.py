@@ -1,12 +1,16 @@
-from fastapi import UploadFile, File, APIRouter, Query
+from fastapi import UploadFile, File, APIRouter, Query, Depends
 import shutil
 import os
 
 from .functions.squats import check_squats
 from .functions.push_ups import check_pushUps
 from .functions.climber import check_climber
-from .functions.bicycle  import check_bicycle
+from .functions.bicycle import check_bicycle
 from .functions.pull_ups import check_pull
+
+from api.users.schemas import UserLogin
+from api.auth.dependencies import get_current_user
+
 
 from core import BASE_DIR
 
@@ -14,8 +18,9 @@ from .schemas import ItemType
 
 router = APIRouter(tags=["Video"])
 
+
 @router.post("/")
-async def video(id: str, type: ItemType = Query(..., description="Choose an video type"), video: UploadFile = File(...)):
+async def video(id: str, type: ItemType = Query(..., description="Choose an video type"), video: UploadFile = File(...), check_auth: UserLogin = Depends(get_current_user),):
     try:
         with open(f"api/cv/cvmedia/{video.filename}", "wb") as buffer:
             shutil.copyfileobj(video.file, buffer)
@@ -37,7 +42,6 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
 
         # os.remove(f"api/cv/cvmedia/{video.filename}")
 
-        
         return count
     except Exception as e:
         return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}

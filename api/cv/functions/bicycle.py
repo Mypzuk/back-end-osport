@@ -6,10 +6,12 @@ import mediapipe as mp
 
 from core import BASE_DIR
 
-async def check_bicycle(name:str):
+
+async def check_bicycle(name: str):
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
-    pose = mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.7)
+    pose = mp_pose.Pose(min_detection_confidence=0.7,
+                        min_tracking_confidence=0.7)
     video = cv2.VideoCapture(f"api/cv/cvmedia/{name}")
 
     res = []
@@ -35,7 +37,8 @@ async def check_bicycle(name:str):
         results = pose.process(image)
 
         if results.pose_landmarks:
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+            mp_drawing.draw_landmarks(
+                image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
             leftKnee = (int(results.pose_landmarks.landmark[25].x * image_width),
                         int(results.pose_landmarks.landmark[25].y * image_height))
@@ -46,12 +49,12 @@ async def check_bicycle(name:str):
             rightHip = (int(results.pose_landmarks.landmark[24].x * image_width),
                         int(results.pose_landmarks.landmark[24].y * image_height))
             leftElbow = (int(results.pose_landmarks.landmark[13].x * image_width),
-                        int(results.pose_landmarks.landmark[13].y * image_height))
+                         int(results.pose_landmarks.landmark[13].y * image_height))
             rightElbow = (int(results.pose_landmarks.landmark[14].x * image_width),
-                        int(results.pose_landmarks.landmark[14].y * image_height))
+                          int(results.pose_landmarks.landmark[14].y * image_height))
 
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
-
+            mp_drawing.draw_landmarks(
+                image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
             if leftKnee[0] < leftHip[0]:
                 last_leftleg = 'LeftBent'
@@ -62,9 +65,9 @@ async def check_bicycle(name:str):
             elif rightKnee[0] > rightHip[0]:
                 last_rightleg = 'RightStr'
 
-            if last_leftleg == 'LeftBent' and distanceCalculate(rightElbow,leftKnee) < 300:
+            if last_leftleg == 'LeftBent' and distanceCalculate(rightElbow, leftKnee) < 300:
                 res.append('Left')
-            if last_rightleg == 'RightBent' and distanceCalculate(leftElbow,rightKnee) < 100:
+            if last_rightleg == 'RightBent' and distanceCalculate(leftElbow, rightKnee) < 100:
                 res.append('Right')
 
         # cv2.imshow("Test tracking", image)
@@ -74,5 +77,5 @@ async def check_bicycle(name:str):
         if i < len(res) - 1:
             if res[i] != res[i + 1]:
                 count += 1
-    
+
     return count + 1

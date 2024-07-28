@@ -10,6 +10,8 @@ from .cv.views import router as video_router
 
 from .whitelist.views import router as whitelist_router
 
+from .auth.views import router as auth_router
+
 router = APIRouter()
 
 router.include_router(router=user_router, prefix="/user")
@@ -17,3 +19,4 @@ router.include_router(router=competition_router, prefix="/competition")
 router.include_router(router=result_router, prefix="/result")
 router.include_router(router=video_router, prefix="/video")
 router.include_router(router=whitelist_router, prefix="/whitelist")
+router.include_router(router=auth_router, prefix="/auth" )
