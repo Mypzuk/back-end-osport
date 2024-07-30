@@ -17,9 +17,9 @@ class TokenConfig(BaseSettings):
     SECRET_KEY: str = Field(default=secret_key, env="SECRET_KEY")
     ALGORITHM: str = Field(default="HS256", env="ALGORITHM")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
-        default=15, env="ACCESS_TOKEN_EXPIRE_MINUTES")
+        default=40, env="ACCESS_TOKEN_EXPIRE_MINUTES")
     REFRESH_TOKEN_EXPIRE_DAYS: int = Field(
-        default=7, env="REFRESH_TOKEN_EXPIRE_DAYS")
+        default=30, env="REFRESH_TOKEN_EXPIRE_DAYS")
 
 
 token_config = TokenConfig()

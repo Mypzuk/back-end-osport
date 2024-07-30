@@ -23,7 +23,8 @@ async def get_competitions(
 
 @router.post("/")
 async def create_competition(
-        competition_in: CompetitionCreate = Depends(competition_check_by_type),
+    # /*= Depends(competition_check_by_type), */
+    competition_in: CompetitionCreate,
         session: AsyncSession = Depends(db_helper.session_getter)):
     return await crud.create_competition(session=session, competition_in=competition_in)
 
