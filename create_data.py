@@ -18,13 +18,27 @@ session.query(Competitions).delete()
 session.query(Results).delete()
 session.query(Whitelist).delete()
 
-# Create 30 unique users
+# Define sample data
+sexes = ['М', 'Ж']
+weights = [random.randint(50, 100) for _ in range(30)]
+heights = [random.randint(150, 200) for _ in range(30)]
+birth_dates = [datetime.now() - timedelta(days=random.randint(5000, 15000))
+               for _ in range(30)]
+
+# Create 30 unique users with all fields filled
 for i in range(1, 31):
     user = Users(
         login=f'User{i}Login',
         email=f'User{i}@example.com',
         password=f'User{i}Password',
         first_name=f'User{i}',
+        last_name=f'LastName{i}',
+        birth_date=birth_dates[i-1],
+        sex=choice(sexes),
+        weight=weights[i-1],
+        height=heights[i-1],
+        total_experience=0.0,
+        current_experience=0.0,
         created=datetime.now(),
         updated=datetime.now()
     )
