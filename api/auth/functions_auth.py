@@ -8,9 +8,10 @@ from fastapi import HTTPException, status
 
 from .schemas import TokenData
 
-import secrets
+# import secrets
 
-secret_key = secrets.token_urlsafe(32)
+# secret_key = secrets.token_urlsafe(32)
+secret_key = "abcd"
 
 
 class TokenConfig(BaseSettings):
