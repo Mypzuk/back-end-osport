@@ -3,6 +3,9 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Competitions
 
+import shutil
+import os
+
 from .schemas import Competition, CompetitionCreate, CompetitionUpdate
 
 
@@ -21,12 +24,26 @@ async def get_competition(session: AsyncSession, **kwargs):
     return result.scalars().first()
 
 
-async def create_competition(session: AsyncSession, competition_in: CompetitionCreate):
+async def create_competition(session: AsyncSession, competition_in:      CompetitionCreate):
+
     competition = Competitions(**competition_in.model_dump())
     session.add(competition)
     await session.commit()
     await session.refresh(competition)
     return competition
+
+
+async def create_manuals(video):
+
+    try:
+        video_path = os.path.join("api/competitions/manuals/", video.filename)
+
+        with open(video_path, "wb") as buffer:
+            shutil.copyfileobj(video.file, buffer)
+        return "Видео загружено"
+
+    except Exception as e:
+        return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}
 
 
 async def delete_competition(session: AsyncSession, competition: Competition):
@@ -51,3 +68,9 @@ async def get_first_id(session: AsyncSession):
     result = await session.execute(stmt)
     first_id = result.scalars().all()
     return first_id
+
+
+def iterfile(competition):
+    file_path = f"api/competitions/manuals/{competition.video_instruction}"
+    with open(file_path, mode="rb") as file_like:
+        yield from file_like

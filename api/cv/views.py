@@ -1,6 +1,6 @@
 from fastapi import UploadFile, File, APIRouter, Query, Depends
 import shutil
-import os
+
 
 from .functions.squats import check_squats
 from .functions.push_ups import check_pushUps

@@ -52,11 +52,12 @@ types = ['pushUps', 'squats', 'climber', 'bicycle', 'pullUps']
 
 # Create 10 competitions
 for i in range(1, 11):
+    type = choice(types)
     competition = Competitions(
         title=f'Competition{i}',
-        type=choice(types),
+        type=type,
         coefficient=round(random.uniform(0.5, 2.0), 2),
-        video_instruction=f'VideoInstruction{i}',
+        video_instruction=f'{type}.mp4',
         end_date=datetime.now() + timedelta(days=30),
         status=choice(['free', 'paid']),
         created=datetime.now(),
