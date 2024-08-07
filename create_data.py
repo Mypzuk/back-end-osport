@@ -57,7 +57,7 @@ for i in range(1, 11):
         title=f'Competition{i}',
         type=type,
         coefficient=round(random.uniform(0.5, 2.0), 2),
-        video_instruction=f'{type}.mp4',
+        video_instruction=f'http://89.110.91.194/manuals/{type}.mp4',
         end_date=datetime.now() + timedelta(days=30),
         status=choice(['free', 'paid']),
         created=datetime.now(),
