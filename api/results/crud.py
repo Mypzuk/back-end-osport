@@ -32,16 +32,21 @@ async def create_result(session: AsyncSession, result_in):
     competition = await get_competition(session=session, competition_id=result_in.competition_id) 
     user = await get_user(session=session, id=result_in.user_id)
     
-    result = await get_user_result_by_competition(session=session, user=user, competition=competition)
+    result = await get_user_result_by_competition_special_for_denied_result(session=session, user=user, competition=competition)
 
     if result:
-        user.total_experience = (user.total_experience - result.points) - 20
-        user.current_experience = (user.current_experience - result.points) - 20
-        
+        if result.status == 'checked_cv':
+            user.total_experience = (user.total_experience - result.points) - 20
+            user.current_experience = (user.current_experience - result.points) - 20
+            
         for name, value in result_in.model_dump().items():
             setattr(result, name, value)
         
         if result_in.status == 'checked_cv':
+            try:
+                os.remove(f"api/cv/cvmedia/{result_in.video}")
+            except FileNotFoundError:
+                return {"message": "Такого видео нет на сервере :c"}
             user.total_experience = (user.total_experience + result_in.points) + 20
             user.current_experience = (user.current_experience + result_in.points) + 20
     else:
@@ -189,3 +194,11 @@ async def competition_info(session: AsyncSession, user):
         })
     
     return competition_data
+
+
+
+async def get_user_result_by_competition_special_for_denied_result(session: AsyncSession, user, competition):
+    stmt = select(Results).where(and_(Results.user_id == user.id, Results.competition_id == competition.competition_id))
+    result = await session.execute(stmt)
+    data = result.scalars().first()
+    return data
