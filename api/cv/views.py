@@ -1,5 +1,6 @@
 from fastapi import UploadFile, File, APIRouter, Query, Depends
 import shutil
+import cv2
 
 
 from .functions.squats import check_squats
@@ -16,6 +17,7 @@ from core import BASE_DIR
 
 from .schemas import ItemType
 
+
 router = APIRouter(tags=["Video"])
 
 
@@ -25,23 +27,33 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
         with open(f"api/cv/cvmedia/{video.filename}", "wb") as buffer:
             shutil.copyfileobj(video.file, buffer)
 
-        if type == "pushUps":
-            count = await check_pushUps(video.filename)
+        data = cv2.VideoCapture(f'api/cv/cvmedia/{video.filename}')
+        frames = data.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = data.get(cv2.CAP_PROP_FPS)
 
-        if type == "squats":
-            count = await check_squats(video.filename)
+        # calculate duration of the video
+        seconds = round(frames / fps)
 
-        if type == "climber":
-            count = await check_climber(video.filename)
+        if seconds < 150:
+            if type == "pushUps":
+                count = await check_pushUps(video.filename)
 
-        if type == "bicycle":
-            count = await check_bicycle(video.filename)
+            if type == "squats":
+                count = await check_squats(video.filename)
 
-        if type == "pullUps":
-            count = await check_pull(video.filename)
+            if type == "climber":
+                count = await check_climber(video.filename)
 
+            if type == "bicycle":
+                count = await check_bicycle(video.filename)
+
+            if type == "pullUps":
+                count = await check_pull(video.filename)
+        else:
+            return 'на проверке'
         # os.remove(f"api/cv/cvmedia/{video.filename}")
 
         return count
     except Exception as e:
+
         return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}
