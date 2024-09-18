@@ -1,6 +1,8 @@
 from fastapi import UploadFile, File, APIRouter, Query, Depends
 import shutil
 import cv2
+from starlette.responses import JSONResponse
+
 
 
 from .functions.squats import check_squats
@@ -49,11 +51,10 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
 
             if type == "pullUps":
                 count = await check_pull(video.filename)
-        else:
-            return 'на проверке'
+                
+            return count
+        
+        return JSONResponse(status_code=202, content={"message": "Видео на проверке администратором"})
         # os.remove(f"api/cv/cvmedia/{video.filename}")
-
-        return count
     except Exception as e:
-
         return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}
