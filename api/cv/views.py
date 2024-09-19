@@ -57,4 +57,5 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
         return JSONResponse(status_code=202, content={"message": "Видео на проверке администратором"})
         # os.remove(f"api/cv/cvmedia/{video.filename}")
     except Exception as e:
-        return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}
+        # return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}
+        return JSONResponse(status_code=404, content={"message": "При загрузке видео произошла ошибка"})  
