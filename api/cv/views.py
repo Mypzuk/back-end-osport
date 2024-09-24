@@ -3,6 +3,7 @@ import shutil
 import cv2
 from starlette.responses import JSONResponse
 
+import os
 
 
 from .functions.squats import check_squats
@@ -35,8 +36,14 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
 
         # calculate duration of the video
         seconds = round(frames / fps)
+        video_name, video_extension = os.path.splitext(video.filename)
 
-        if seconds < 150:
+        extensions = ['.mp4', '.mov']
+        if video_extension.lower() not in extensions:
+            return JSONResponse(status_code=404, content={"message": "При загрузке видео произошла ошибка"})  
+
+                                            # 750mb
+        if seconds < 150 & video.size < 786432000 :
             if type == "pushUps":
                 count = await check_pushUps(video.filename)
 
