@@ -40,6 +40,7 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
 
         extensions = ['.mp4', '.mov']
         if video_extension.lower() not in extensions:
+            os.remove(f"api/cv/cvmedia/{video.filename}")
             return JSONResponse(status_code=404, content={"code":"404","message": "При загрузке видео произошла ошибка"})  
                                             # 750mb
         if seconds < 150 & video.size < 786432000 :
@@ -64,4 +65,5 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
         # os.remove(f"api/cv/cvmedia/{video.filename}")
     except Exception as e:
         # return {"error": f"Произошла ошибка при загрузке файла: {str(e)}"}
+        os.remove(f"api/cv/cvmedia/{video.filename}")
         return JSONResponse(status_code=404, content={"code":"404","message": "При загрузке видео произошла ошибка"})  
