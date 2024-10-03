@@ -59,7 +59,7 @@ async def video(id: str, type: ItemType = Query(..., description="Choose an vide
             if type == "pullUps":
                 count = await check_pull(video.filename)
                 
-            return count
+            return JSONResponse(status_code=200, content={"code":"200","message": f"{count}"})
         
         return JSONResponse(status_code=202, content={"code":"202","message": "Видео на проверке администратором"})
         # os.remove(f"api/cv/cvmedia/{video.filename}")
