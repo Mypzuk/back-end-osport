@@ -1,4 +1,6 @@
 import os
+from starlette.responses import JSONResponse
+
 
 from sqlalchemy import select, and_, desc, func
 from sqlalchemy.engine import Result
@@ -46,7 +48,8 @@ async def create_result(session: AsyncSession, result_in):
             try:
                 os.remove(f"api/cv/cvmedia/{result_in.video}")
             except FileNotFoundError:
-                return {"message": "Такого видео нет на сервере :c"}
+                return JSONResponse(status_code=404, content={"code":"404","message": "Такого видео нет на сервере :c"})  
+
             user.total_experience = (user.total_experience + result_in.points) + 20
             user.current_experience = (user.current_experience + result_in.points) + 20
     else:
@@ -56,7 +59,7 @@ async def create_result(session: AsyncSession, result_in):
             try:
                 os.remove(f"api/cv/cvmedia/{result_in.video}")
             except FileNotFoundError:
-                return {"message": "Такого видео нет на сервере :c"}
+                return JSONResponse(status_code=404, content={"code":"404","message": "Такого видео нет на сервере :c"})  
 
             user.total_experience = (user.total_experience + result_in.points) + 20
             user.current_experience = (user.current_experience + result_in.points) + 20 
