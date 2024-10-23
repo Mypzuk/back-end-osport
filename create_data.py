@@ -53,17 +53,38 @@ types = ['pushUps', 'squats', 'climber', 'bicycle', 'pullUps']
 # Create 10 competitions
 for i in range(1, 11):
     type = choice(types)
+    
+    # Randomly decide whether the competition is in the past, present, or future
+    time_period = choice(['past', 'current', 'future'])
+    
+    if time_period == 'past':
+        # For past competitions, both start and end dates are in the past
+        start_date = datetime.now() - timedelta(days=random.randint(60, 90))
+        end_date = start_date + timedelta(days=random.randint(15, 30))
+    
+    elif time_period == 'current':
+        # For current competitions, start date is in the past, and end date is in the future
+        start_date = datetime.now() - timedelta(days=random.randint(5, 15))
+        end_date = datetime.now() + timedelta(days=random.randint(5, 15))
+    
+    else:  # 'future'
+        # For future competitions, both start and end dates are in the future
+        start_date = datetime.now() + timedelta(days=random.randint(5, 15))
+        end_date = start_date + timedelta(days=random.randint(15, 30))
+    
     competition = Competitions(
         title=f'Competition{i}',
         type=type,
         coefficient=round(random.uniform(0.5, 2.0), 2),
         video_instruction=f'http://89.110.91.194/manuals/{type}.mp4',
-        end_date=datetime.now() + timedelta(days=30),
+        start_date=start_date,  # Adding start date
+        end_date=end_date,
         status=choice(['free', 'paid']),
         created=datetime.now(),
         updated=datetime.now()
     )
     session.add(competition)
+
 
 # Commit competitions to the database
 session.commit()

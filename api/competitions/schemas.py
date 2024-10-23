@@ -13,6 +13,7 @@ class CompetitionCreate(BaseModel):
     password: str
     coefficient: float
     video_instruction: str
+    start_date: date
     end_date: date
     status: str = 'free'
 

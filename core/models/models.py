@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Float, Date, ForeignKey
+from sqlalchemy import Integer, String, Float, Date, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -37,6 +37,7 @@ class Competitions(Base):
     password: Mapped[str] = mapped_column(String, nullable=True)
     coefficient: Mapped[float] = mapped_column(Float, nullable=True)
     video_instruction: Mapped[str] = mapped_column(String, nullable=False)
+    start_date: Mapped[Date] = mapped_column(Date, default=func.now(), nullable=False) 
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     status: Mapped[Date] = mapped_column(String, default="free")
 
