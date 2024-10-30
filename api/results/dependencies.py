@@ -67,7 +67,7 @@ async def check_user_and_competition_and_result(
     if result:
         if result.count >= result_in.count:
             raise HTTPException(
-                status_code=418, detail="Результат не больше предыдущего")
+                status_code=200, detail="Результат не больше предыдущего")
 
     return await calc_points(result_in, competition)
 
