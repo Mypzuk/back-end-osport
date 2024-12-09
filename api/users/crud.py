@@ -4,7 +4,7 @@ from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import Users, Results
 from api.auth.crud import login
-from .dependencies import user_password_check
+from .dependencies import user_password_check, hash_password
 
 from .schemas import User, UserCreate, UserUpdateBirthday
 
@@ -17,6 +17,7 @@ async def get_users(session: AsyncSession):
 
 
 async def create_user(session: AsyncSession, user_in: UserCreate):
+    user_in.password = await hash_password(user_in.password)
     user = Users(**user_in.model_dump())
     session.add(user)
     await session.commit()
