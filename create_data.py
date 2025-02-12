@@ -3,6 +3,7 @@ from random import choice, sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timedelta
+import bcrypt
 from core.models import Base, Users, Competitions, Results, Whitelist
 
 # Connect to the database
@@ -18,6 +19,12 @@ session.query(Competitions).delete()
 session.query(Results).delete()
 session.query(Whitelist).delete()
 
+# Функция для хэширования паролей
+def hash_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password.decode('utf-8')  # Храним хэш как строку в БД
+
 # Define sample data
 sexes = ['М', 'Ж']
 weights = [random.randint(50, 100) for _ in range(30)]
@@ -30,7 +37,7 @@ for i in range(1, 31):
     user = Users(
         login=f'User{i}Login',
         email=f'User{i}@example.com',
-        password=f'User{i}Password',
+        password=hash_password(f'User{i}Password'),  # Хэшируем пароль
         first_name=f'User{i}',
         last_name=f'LastName{i}',
         birth_date=birth_dates[i-1],
@@ -84,7 +91,6 @@ for i in range(1, 11):
         updated=datetime.now()
     )
     session.add(competition)
-
 
 # Commit competitions to the database
 session.commit()
