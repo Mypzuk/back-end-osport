@@ -60,7 +60,7 @@ async def user_password_check(user, user_password):
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail=f"Неправильный пароль",
+        detail=f"Неверный пароль",
     )
 
 async def hash_password(password: str) -> str:
