@@ -103,25 +103,25 @@ async def nulify_result(session: AsyncSession, result):
     return result_row
 
 async def get_user_results(session: AsyncSession, user: User):
-    stmt = select(Results).where(and_(Results.user_id == user.id, Results.status != status_wait_adm))
+    stmt = select(Results).where(and_(Results.user_id == user.id))
     result: Result = await session.execute(stmt)
     data = result.scalars().all()
     return list(data)
 
 async def get_user_result_by_competition(session: AsyncSession, user, competition):
-    stmt = select(Results).where(and_(Results.user_id == user.id, Results.competition_id == competition.competition_id, Results.status != status_wait_adm))
+    stmt = select(Results).where(and_(Results.user_id == user.id, Results.competition_id == competition.competition_id))
     result = await session.execute(stmt)
     data = result.scalars().first()
     return data
 
 async def get_competition_result(session: AsyncSession, competition):
-    stmt = select(Results).where(and_(Results.competition_id == competition.competition_id, Results.status != status_wait_adm))
+    stmt = select(Results).where(and_(Results.competition_id == competition.competition_id))
     result: Result = await session.execute(stmt)
     data = result.scalars().all()
     return list(data)
 
 async def get_competition_participants(session: AsyncSession, competition):
-    stmt = select(Results.user_id).where(and_(Results.competition_id == competition.competition_id, Results.status != status_wait_adm)).distinct()
+    stmt = select(Results.user_id).where(and_(Results.competition_id == competition.competition_id)).distinct()
     result: Result = await session.execute(stmt)
     data = result.scalars().all()
     return list(data)
@@ -133,13 +133,13 @@ async def check_user_status_by_competition(session: AsyncSession, user, competit
     return list(data)
 
 async def get_competition_rating(session: AsyncSession, competition):
-    stmt = select(Results).where(and_(Results.competition_id == competition.competition_id, Results.status != status_wait_adm)).order_by(desc(Results.count))
+    stmt = select(Results).where(and_(Results.competition_id == competition.competition_id)).order_by(desc(Results.count))
     result: Result = await session.execute(stmt)
     data = result.scalars().all()
     return list(data)
 
 async def get_total_rating(session: AsyncSession):
-    stmt = select(Results.user_id, func.sum(Results.points)).where(Results.status != status_wait_adm).filter(Results.status.isnot(None), Results.count > 0).group_by(Results.user_id).order_by(desc(func.sum(Results.points)))
+    stmt = select(Results.user_id, func.sum(Results.points)).filter(Results.status.isnot(None), Results.count > 0).group_by(Results.user_id).order_by(desc(func.sum(Results.points)))
     result: Result = await session.execute(stmt)
     data = result.scalars().all()
     return data
@@ -152,7 +152,7 @@ async def competition_info(session: AsyncSession, user):
             Results.count
         )
         .join(Competitions, Results.competition_id == Competitions.competition_id)
-        .where(and_(Results.user_id == user.id, Results.status != status_wait_adm))
+        .where(and_(Results.user_id == user.id))
         .group_by(Results.competition_id, Competitions.title)
     )
 
@@ -162,7 +162,7 @@ async def competition_info(session: AsyncSession, user):
         
         # Get total participants in the competition
         members = await session.scalar(
-            select(func.count(Results.user_id)).where(and_(Results.competition_id == competition_id, Results.status != status_wait_adm))
+            select(func.count(Results.user_id)).where(and_(Results.competition_id == competition_id))
         )
         
         # Get user's place by count
@@ -172,7 +172,6 @@ async def competition_info(session: AsyncSession, user):
                 func.row_number().over(order_by=Results.count.desc()).label('row_number')
             )
             .filter(Results.competition_id == competition_id)
-            .filter(Results.status != status_wait_adm)
             .subquery()
         )
 
