@@ -22,13 +22,13 @@ async def create_user(session: AsyncSession, user_in: UserCreate):
     session.add(user)
     await session.commit()
     await session.refresh(user)
+    return await login(user=user)
 
 
 async def patch_user_after_registration(session: AsyncSession, user, user_in):
     for name, value in user_in:
         setattr(user, name, value)
     await session.commit()
-    await login(user=user)
     return {"status": "Удачно", "message": "Пользователь успешно обновлен"}
 
 
