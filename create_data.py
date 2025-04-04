@@ -83,7 +83,7 @@ for i in range(1, 11):
         title=f'Competition{i}',
         type=type,
         coefficient=round(random.uniform(0.5, 2.0), 2),
-        video_instruction=f'http://89.110.91.194/manuals/{type}.mp4',
+        video_instruction=f'http://217.114.2.56/manuals/{type}.mp4',
         start_date=start_date,  # Adding start date
         end_date=end_date,
         status=choice(['free', 'paid']),
@@ -95,7 +95,6 @@ for i in range(1, 11):
 # Commit competitions to the database
 session.commit()
 
-
 # Fetch all users and competitions
 users = session.query(Users).all()
 competitions = session.query(Competitions).all()
@@ -103,7 +102,7 @@ competitions = session.query(Competitions).all()
 # Make each user participate in 6 random competitions that have already started
 for user in users:
     # Фильтруем соревнования, которые уже начались на текущий момент
-    active_competitions = [comp for comp in competitions if comp.start_date <= datetime.now()]
+    active_competitions = [comp for comp in competitions if comp.start_date <= datetime.now().date()]
     # Если доступных соревнований меньше 6, берем все доступные
     num_competitions = min(6, len(active_competitions))
     if num_competitions > 0:  # Проверяем, есть ли вообще доступные соревнования
