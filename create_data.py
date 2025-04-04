@@ -95,45 +95,51 @@ for i in range(1, 11):
 # Commit competitions to the database
 session.commit()
 
+
 # Fetch all users and competitions
 users = session.query(Users).all()
 competitions = session.query(Competitions).all()
 
-# Make each user participate in 6 random competitions
+# Make each user participate in 6 random competitions that have already started
 for user in users:
-    user_competitions = sample(competitions, 6)
-    for competition in user_competitions:
-        count = random.randint(10, 100)
-        coefficient = competition.coefficient
-        points = count * coefficient
-        status = choice(['checked_cv', 'wait_adm'])
-        result = Results(
-            competition_id=competition.competition_id,
-            user_id=user.id,
-            video=f'Video{user.id}_{competition.competition_id}',
-            count=count,
-            points=points,
-            status=status,
-            created=datetime.now(),
-            updated=datetime.now()
-        )
-        session.add(result)
-
-        # Update user's experience if status is 'checked_cv'
-        if status == 'checked_cv':
-            user.current_experience += 20 + points
-            user.total_experience += 20 + points
-            session.add(user)
-
-        # If competition is paid, add user email to whitelist
-        if competition.status == 'paid':
-            whitelist_entry = Whitelist(
+    # Фильтруем соревнования, которые уже начались на текущий момент
+    active_competitions = [comp for comp in competitions if comp.start_date <= datetime.now()]
+    # Если доступных соревнований меньше 6, берем все доступные
+    num_competitions = min(6, len(active_competitions))
+    if num_competitions > 0:  # Проверяем, есть ли вообще доступные соревнования
+        user_competitions = sample(active_competitions, num_competitions)
+        for competition in user_competitions:
+            count = random.randint(10, 100)
+            coefficient = competition.coefficient
+            points = count * coefficient
+            status = choice(['checked_cv', 'wait_adm'])
+            result = Results(
                 competition_id=competition.competition_id,
-                email=user.email,
+                user_id=user.id,
+                video=f'Video{user.id}_{competition.competition_id}',
+                count=count,
+                points=points,
+                status=status,
                 created=datetime.now(),
                 updated=datetime.now()
             )
-            session.add(whitelist_entry)
+            session.add(result)
+
+            # Update user's experience if status is 'checked_cv'
+            if status == 'checked_cv':
+                user.current_experience += 20 + points
+                user.total_experience += 20 + points
+                session.add(user)
+
+            # If competition is paid, add user email to whitelist
+            if competition.status == 'paid':
+                whitelist_entry = Whitelist(
+                    competition_id=competition.competition_id,
+                    email=user.email,
+                    created=datetime.now(),
+                    updated=datetime.now()
+                )
+                session.add(whitelist_entry)
 
 # Commit all results and whitelist entries to the database
 session.commit()
